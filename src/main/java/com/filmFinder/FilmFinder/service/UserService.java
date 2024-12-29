@@ -45,5 +45,9 @@ public class UserService implements UserDetailsService {
                 .password(user.getPassword())
                 .build();
     }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
 }
 

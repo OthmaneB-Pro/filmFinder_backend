@@ -3,10 +3,13 @@ package com.filmFinder.FilmFinder.controller;
 import com.filmFinder.FilmFinder.entity.User;
 import com.filmFinder.FilmFinder.security.JwtUtil;
 import com.filmFinder.FilmFinder.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +25,19 @@ public class UserController {
 
     @GetMapping
     public List<User> readAll(){
-        return this.userService.readAll();
+        List<User> users = this.userService.readAll();
+        if (users.isEmpty()) {
+            throw new EntityNotFoundException("No users found");
+        }
+        return users;
+
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public User register(@RequestBody User user){
+        if (userService.existsByUsername(user.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
+        }
         return this.userService.register(user);
     }
 
@@ -44,6 +55,6 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         }
-        return ResponseEntity.badRequest().body("Invalid credentials");
+        throw new IllegalArgumentException("Invalid Credential");
     }
 }
