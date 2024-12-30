@@ -21,6 +21,7 @@ public class UserService implements UserDetailsService {
     public List<User> readAll(){
         return this.userRepository.findAll();
     }
+
     public User register(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return this.userRepository.save(user);
