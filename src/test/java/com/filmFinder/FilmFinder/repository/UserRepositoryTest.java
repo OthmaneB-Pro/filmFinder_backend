@@ -29,10 +29,12 @@ class UserRepositoryTest {
         //Act
 
         final List<User> userList = this.userRepository.findAll();
+        final User user = this.userRepository.findByUsername("Othmane");
 
         //Asserts
 
         assertEquals(2, userList.size());
+        Assertions.assertEquals(user.getUsername(), userOne.getUsername());
 
     }
 }
